@@ -10,11 +10,11 @@ import (
 )
 
 type RootCmd struct {
-	Globals
+	GlobalFlags
 	Flags flags.FlagsCmd `kong:"cmd,help='Make requests (list, create, etc.) on flags',group='flags'"`
 }
 
-type Globals struct {
+type GlobalFlags struct {
 	AccessToken string `kong:"required,help='LaunchDarkly API token with write-level access',type='string',env='ACCESS_TOKEN',envprefix='LD_'"`
 	BaseURI     string `kong:"help='LaunchDarkly base URI',default='https://app.launchdarkly.com',type='string',env='BASE_URI',envprefix='LD_'"`
 }
@@ -45,21 +45,6 @@ func NewRootCmd(
 	ctx, err := parser.Parse(args)
 	parser.FatalIfErrorf(err)
 
-	// parser.Stdout
-
-	/*
-		ctx := kong.Parse(&rootCmd,
-			kong.Configuration(kongyaml.Loader, "./config.yml"),
-			kong.ConfigureHelp(kong.HelpOptions{
-				Compact: true,
-			}),
-			kong.Description("LaunchDarkly CLI to control your feature flags"),
-			kong.Name("ldcli"),
-			kong.UsageOnError(),
-		)
-	*/
-
-	// c := client.NewLDClient(
 	c := clientFn(
 		rootCmd.AccessToken,
 		rootCmd.BaseURI,

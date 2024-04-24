@@ -9,7 +9,7 @@ import (
 )
 
 type Client interface {
-	// ListProjects(ctx context.Context) ([]byte, error)
+	ListFlags(ctx context.Context, projKey string) ([]byte, error)
 	GetFlag(ctx context.Context, projKey string, envKey string, key string) ([]byte, error)
 }
 
@@ -37,16 +37,16 @@ func NewLDClient(accessToken string, baseURI string, version string) LDClient {
 	}
 }
 
-func (c LDClient) ListProjects(ctx context.Context) ([]byte, error) {
-	projects, _, err := c.client.ProjectsApi.
-		GetProjects(ctx).
-		Limit(2).
+func (c LDClient) ListFlags(ctx context.Context, projKey string) ([]byte, error) {
+	flags, _, err := c.client.
+		FeatureFlagsApi.
+		GetFeatureFlags(ctx, projKey).
 		Execute()
 	if err != nil {
 		return nil, err
 	}
 
-	responseJSON, err := json.Marshal(projects)
+	responseJSON, err := json.Marshal(flags)
 	if err != nil {
 		return nil, err
 	}
